@@ -1402,9 +1402,12 @@ export class ODataProcessor extends Transform {
                                 metadata[`${prop}@odata.navigationLink`] = `${context["@odata.id"]}/${prop}`;
                             }
                         } else if (type != "Edm.String" && type != "Edm.Boolean") {
-                            let typeName = Edm.getTypeName(elementType, prop, this.serverType.container);
-                            if (typeof type == "string" && type.indexOf("Edm.") == 0) typeName = typeName.replace(/Edm\./, "");
-                            context[`${prop}@odata.type`] = `#${typeName}`;
+                            if (!this.query["$select"] || this.query["$select"].split(",").indexOf(prop) !== -1) {
+                                let typeName = Edm.getTypeName(elementType, prop, this.serverType.container);
+                                if (typeof type == "string" && type.indexOf("Edm.") == 0) typeName = typeName.replace(/Edm\./, "");
+                                context[`${prop}@odata.type`] = `#${typeName}`;
+
+                            }
                         }
                     }
                     if (includes && includes[prop]) {

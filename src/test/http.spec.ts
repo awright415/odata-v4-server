@@ -123,6 +123,22 @@ describe("OData HTTP", () => {
             });
         });
 
+        it("should exclude metadata for properties excluded by $select", () => {
+            return request.get(`http://localhost:3002/EntitySet?$select=id`, { headers: { accept: 'text/html;odata.metadata=full' } }, (err, response, result) => {
+                expect(JSON.parse(result)).to.deep.equal({
+                    "@odata.context": "http://localhost:3002/$metadata#EntitySet(id)",
+                    value: [{
+                        "@odata.id": "http://localhost:3002/EntitySet(1)",
+                        "@odata.editLink": "http://localhost:3002/EntitySet(1)",
+                        "@odata.type": "#Default.Foobar",
+                        "a": 1,
+                        "id": 1,
+                        "id@odata.type": "#Int32",
+                    }]
+                });
+            });
+        });
+
         it("should return entityset result with 'text/html;odata.metadata=minimal' header", () => {
             return request.get(`http://localhost:3002/EntitySet`, { headers: { accept: 'text/html;odata.metadata=minimal' } }, (err, response, result) => {
                 expect(JSON.parse(result)).to.deep.equal({
