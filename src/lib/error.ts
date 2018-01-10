@@ -9,6 +9,9 @@ export class CustomError extends Error{
 
 export class HttpRequestError extends CustomError{
     statusCode:number
+    target?: string
+    details?: any[];
+
     constructor(statusCode:number, message:string){
         super(message);
         this.statusCode = statusCode;

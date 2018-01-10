@@ -307,14 +307,20 @@ export function ODataErrorHandler(err, _, res, next){
         }
         let statusCode = err.statusCode || err.status || (res.statusCode < 400 ? 500 : res.statusCode);
         if (!res.statusCode || res.statusCode < 400) res.status(statusCode);
-        res.send({
+        
+        let errBody: any = {
             error: {
                 code: statusCode,
                 message: err.message,
                 stack: err.stack
             }
-        });
-    }else next();
+        };
+
+        if (err.target) errBody.target = err.target;
+        if (err.details) errBody.details = err.details;
+
+        res.send(errBody);
+    } else next();
 }
 
 /** Create Express server for OData Server
